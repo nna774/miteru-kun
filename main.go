@@ -37,7 +37,7 @@ func isDirectory(path string) bool {
 func readLast(path string) int64 {
   file, err := os.Open(path)
   if err != nil {
-    fmt.Fprintf(os.Stderr, "something went wrong: %v", err)
+    fmt.Fprintf(os.Stderr, "something went wrong: %v\n", err)
     os.Exit(-1)
   }
   defer file.Close()
@@ -45,12 +45,12 @@ func readLast(path string) int64 {
   buf := make([]byte, 16) // magic
   _, err = file.Read(buf)
   if err != nil {
-    fmt.Fprintf(os.Stderr, "something went wrong: %v", err)
+    fmt.Fprintf(os.Stderr, "something went wrong: %v\n", err)
     os.Exit(-1)
   }
   last, err := strconv.Atoi(strings.Split(bytes.NewBuffer(buf).String(), "\n")[0])
   if err != nil {
-    fmt.Fprintf(os.Stderr, "something went wrong: %v", err)
+    fmt.Fprintf(os.Stderr, "something went wrong: %v\n", err)
     os.Exit(-1)
   }
   return int64(last)
@@ -81,10 +81,23 @@ func main() {
     os.Exit(-1)
   }
 
-  if srcLast - dstLast > interval - gap {
+  if srcLast - dstLast > interval + gap {
     fmt.Fprintf(os.Stderr, "backup seems to fail for over %v(seconds)\nsrcLast: %v\ndstLast: %v\n", interval, srcLast, dstLast)
     os.Exit(-1)
   }
 
-  fmt.Println("seems good")
+  fmt.Printf("seems good. update srcLast to %v(from %v)\n", now, srcLast)
+  file, err := os.OpenFile(path.Join(srcDir, miteruFile), os.O_RDWR, 0644)
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "something went wrong: %v\n", err)
+    os.Exit(-1)
+  }
+  defer file.Close()
+  _, err = file.Write([]byte(strconv.FormatInt(now, 10)))
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "something went wrong: %v\n", err)
+    os.Exit(-1)
+  }
+
+  fmt.Println("success")
 }
