@@ -77,12 +77,12 @@ func main() {
 
   now := time.Now().Unix()
   if now - srcLast > interval - gap {
-    fmt.Fprintf(os.Stderr, "miteru-kun seems to fail for over %v(seconds)\nlast: %v\n", interval, srcLast)
+    fmt.Fprintf(os.Stderr, "miteru-kun seems to fail for over %v(seconds)\nlast: %v(diff: %v)\n", interval, srcLast, now - srcLast)
     os.Exit(-1)
   }
 
   if srcLast - dstLast > interval + gap {
-    fmt.Fprintf(os.Stderr, "backup seems to fail for over %v(seconds)\nsrcLast: %v\ndstLast: %v\n", interval, srcLast, dstLast)
+    fmt.Fprintf(os.Stderr, "backup seems to fail for over %v(seconds)\nsrcLast: %v\ndstLast: %v(diff: %v)\n", interval, srcLast, dstLast, srcLast - dstLast)
     os.Exit(-1)
   }
 
