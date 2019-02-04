@@ -79,7 +79,7 @@ func main() {
 	now := time.Now().Unix()
 	if now-srcLast > interval-gap {
 		fmt.Fprintf(os.Stderr, "miteru-kun seems to fail for over %v(seconds)\nlast: %v(diff: %v)\n", interval, srcLast, now-srcLast)
-		os.Exit(-1)
+		os.Exit(-1) // ここで終わらないほうが良い気がする。
 	}
 
 	if srcLast-dstLast > interval+gap {
